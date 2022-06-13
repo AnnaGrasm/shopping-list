@@ -12,8 +12,8 @@ export default function ShoppingItem({name}) {
 
 
 const ItemTag = styled.li `
-  background-color: #89d889;
-  border: green solid 2px;
+  background-color: #f5ee65;
+  border: #558000 solid 2px;
   padding: 1rem;
   border-radius: 20px;
   

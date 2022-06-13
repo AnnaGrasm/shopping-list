@@ -8,7 +8,7 @@ function App() {
   const [shoppingList, setShoppingList] = useState([]);
   const [searchTerm, SetSearchTerm] = useState("");
   const [finalShoppingList, setFinalShoppingList] = useState([]);
-  const [lang, setLang] = useState("English")
+  const [lang, setLang] = useState("English");
 
   useEffect(() => {
     loadShoppingList();
@@ -25,54 +25,69 @@ function App() {
     }
   }, []);
 
+  const filterItem = shoppingList.filter((item) =>
+    item.name.de.toLowerCase().includes(searchTerm)
+  );
 
-  const filterItem = shoppingList.filter((item) => item.name.de.toLowerCase().includes(searchTerm))
-
-function searchItem(title){
-  SetSearchTerm(title)
-}
-
-function addItem(name){
-
-  setFinalShoppingList([...finalShoppingList, name])
-
-}
-
-function changeLanguage() {
-  if (lang === "English") {
-    setLang("Deutsch");
-  } else {
-    setLang("English");
+  function searchItem(title) {
+    SetSearchTerm(title);
   }
-}
+
+  function addItem(name) {
+    setFinalShoppingList([...finalShoppingList, name]);
+  }
+
+  function changeLanguage() {
+    if (lang === "English") {
+      setLang("Deutsch");
+    } else {
+      setLang("English");
+    }
+  }
 
   return (
-    <div className="App">
+    <MainContainer>
+      <LanguageButton onClick={changeLanguage}>{lang}</LanguageButton>
       <ItemContainer>
-        <button onClick={changeLanguage}>{lang}</button>
         {finalShoppingList.map((item) => (
-          <ShoppingItem key={item._id} name={lang === "Deutsch" ? item.name.en : item.name.de} />
+          <ShoppingItem
+            key={item._id}
+            name={lang === "Deutsch" ? item.name.en : item.name.de}
+          />
         ))}
       </ItemContainer>
-      <ShoppingInput searchTerm={searchTerm} onSearchItem={searchItem}/>
+      <ShoppingInput searchTerm={searchTerm} onSearchItem={searchItem} />
       <ItemContainer>
-        {searchTerm && filterItem.map((item) => (
-          <ShoppingList key={item._id} name={lang === "Deutsch" ? item.name.en : item.name.de} onAddItem={() => addItem(item)} />
-        ))}
+        {searchTerm &&
+          filterItem.map((item) => (
+            <ShoppingList
+              key={item._id}
+              name={lang === "Deutsch" ? item.name.en : item.name.de}
+              onAddItem={() => addItem(item)}
+            />
+          ))}
       </ItemContainer>
-      
-      
-    </div>
+    </MainContainer>
   );
 }
 
 export default App;
 
+const MainContainer = styled.div `
+  display: flex;
+  flex-direction: column;
+`
+
 const ItemContainer = styled.ul`
   display: flex;
   flex-wrap: wrap;
-  gap: .4rem;
+  gap: 0.4rem;
 `;
 
-
-
+const LanguageButton = styled.button`
+  padding: 1rem;
+  background-color: #88a5be;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-top: 3rem;
+`;
