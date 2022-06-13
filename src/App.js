@@ -1,25 +1,78 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import ShoppingItem from "./component/ShoppingItem";
+import ShoppingInput from "./component/ShoppingInput";
+import ShoppingList from "./component/ShoppingList";
 
 function App() {
+  const [shoppingList, setShoppingList] = useState([]);
+  const [searchTerm, SetSearchTerm] = useState("");
+  const [finalShoppingList, setFinalShoppingList] = useState([]);
+  const [lang, setLang] = useState("English")
+
+  useEffect(() => {
+    loadShoppingList();
+    async function loadShoppingList() {
+      try {
+        const response = await fetch(
+          "https://fetch-me.vercel.app/api/shopping/items"
+        );
+        const data1 = await response.json();
+        setShoppingList(data1.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, []);
+
+
+  const filterItem = shoppingList.filter((item) => item.name.de.toLowerCase().includes(searchTerm))
+
+function searchItem(title){
+  SetSearchTerm(title)
+}
+
+function addItem(name){
+
+  setFinalShoppingList([...finalShoppingList, name])
+
+}
+
+function changeLanguage() {
+  if (lang === "English") {
+    setLang("Deutsch");
+  } else {
+    setLang("English");
+  }
+}
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ItemContainer>
+        <button onClick={changeLanguage}>{lang}</button>
+        {finalShoppingList.map((item) => (
+          <ShoppingItem key={item._id} name={lang === "Deutsch" ? item.name.en : item.name.de} />
+        ))}
+      </ItemContainer>
+      <ShoppingInput searchTerm={searchTerm} onSearchItem={searchItem}/>
+      <ItemContainer>
+        {searchTerm && filterItem.map((item) => (
+          <ShoppingList key={item._id} name={lang === "Deutsch" ? item.name.en : item.name.de} onAddItem={() => addItem(item)} />
+        ))}
+      </ItemContainer>
+      
+      
     </div>
   );
 }
 
 export default App;
+
+const ItemContainer = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+`;
+
+
+
