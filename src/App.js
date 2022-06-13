@@ -1,53 +1,20 @@
-import { useState, useEffect } from "react";
 import styled from "styled-components";
 import ShoppingItem from "./component/ShoppingItem";
 import ShoppingInput from "./component/ShoppingInput";
 import ShoppingList from "./component/ShoppingList";
+import useItems from "./hooks/useItems";
 
 function App() {
-  const [shoppingList, setShoppingList] = useState([]);
-  const [searchTerm, SetSearchTerm] = useState("");
-  const [finalShoppingList, setFinalShoppingList] = useState([]);
-  const [lang, setLang] = useState("English");
+  
+const {filterItem, searchItem, addItem, changeLanguage, finalShoppingList, searchTerm, lang, resetAll} = useItems()
 
-  useEffect(() => {
-    loadShoppingList();
-    async function loadShoppingList() {
-      try {
-        const response = await fetch(
-          "https://fetch-me.vercel.app/api/shopping/items"
-        );
-        const data1 = await response.json();
-        setShoppingList(data1.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, []);
-
-  const filterItem = shoppingList.filter((item) =>
-    item.name.de.toLowerCase().includes(searchTerm)
-  );
-
-  function searchItem(title) {
-    SetSearchTerm(title);
-  }
-
-  function addItem(name) {
-    setFinalShoppingList([...finalShoppingList, name]);
-  }
-
-  function changeLanguage() {
-    if (lang === "English") {
-      setLang("Deutsch");
-    } else {
-      setLang("English");
-    }
-  }
-
+ 
+ 
   return (
     <MainContainer>
-      <LanguageButton onClick={changeLanguage}>{lang}</LanguageButton>
+      <LanguageButton onClick={changeLanguage}>English</LanguageButton>
+      <LanguageButton onClick={changeLanguage}>Deutsch</LanguageButton>
+      <ResetButton onClick={resetAll}>Reset</ResetButton>
       <ItemContainer>
         {finalShoppingList.map((item) => (
           <ShoppingItem
@@ -91,3 +58,10 @@ const LanguageButton = styled.button`
   margin-left: auto;
   margin-top: 3rem;
 `;
+
+const ResetButton = styled.button `
+margin: auto;
+background-color: #e24d4d;
+padding: 1rem;
+border-radius: 10px;
+`
